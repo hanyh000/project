@@ -187,15 +187,17 @@ void loop()
   // --- 5. LED 단계 표시 ---
   if (distance1 > 0 && distance1 <= RED_MAX) {
     Serial.println("ALERT : R");
+    stopMotors();
     digitalWrite(gLED, LOW); digitalWrite(yLED, LOW); digitalWrite(rLED, HIGH);
   } else if (distance1 <= YEL_MAX) {
     Serial.println("ALERT : Y");
+    data = 'Y';
     digitalWrite(gLED, LOW); digitalWrite(yLED, HIGH); digitalWrite(rLED, LOW);
   } else if (distance1 <= GRN_MAX) {
     Serial.println("ALERT : G");
     digitalWrite(gLED, HIGH); digitalWrite(yLED, LOW); digitalWrite(rLED, LOW);
   } else {
-    digitalWrite(gLED, LOW); digitalWrite(yLED, LOW); digitalWrite(rLED, LOW);
+    digitalWrite(gLED, HIGH); digitalWrite(yLED, LOW); digitalWrite(rLED, LOW);
   }
 
   // --- 6. 거리별 자동 부저 로직 ---
