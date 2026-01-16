@@ -229,7 +229,7 @@ class RLEnvironment(Node):
 
         return response
 
-    def reset_environment_callback(self, response):
+    def reset_environment_callback(self, request, response):
         # 호출 되었을 때 ROS 버전을 파악하고 
         # ROS 버전에 맞는 정지 메시지를 발행 하면서 로그 띄움
         # state 구조에서 계산을 하기 위해 사용되거나 종료 되었음을 알리기 위한 값들을 초기화 해서 
