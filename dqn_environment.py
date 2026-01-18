@@ -110,7 +110,8 @@ class RLEnvironment(Node):
         # 5개 사이즈인 액션이 회전 행동을 정하기 위해 지정한 Z값 리스트
 
         self.normal_checkpoints = [
-            [1.0, 0.0]
+            [1.0, 0.5],
+            [1.3, 2.0]
         ]
         self.normal_cp_idx = 0 
         self.num_checkpoints = len(self.normal_checkpoints)
@@ -128,7 +129,7 @@ class RLEnvironment(Node):
         # 같은 화살표를 연속으로 잡지 못하게 하기 위한 초기 값 
 
         self.cv_bridge = CvBridge()
-        model_path = os.path.expanduser('/home/dev/turtlebot3_ws/src/turtlebot3_machine_learning/turtlebot3_dqn/turtlebot3_dqn/best.pt')
+        model_path = os.path.expanduser('/home/hyh/turtlebot3_ws/yolo_model/best.pt')
         self.yolo_model = YOLO(model_path)
         self.detected_object_info = [0.0]
         # 욜로 모델을 불러와 인식한 라벨의 정보를 숫자화 하여 저장하기 위한 초기 값 
@@ -315,9 +316,10 @@ class RLEnvironment(Node):
         # 이 보상주는 것이 끝나면 현재 스탭을 쿨타임 시작 스탭으로 두고 10스탭정도 차이나면 쿨타임이 끝나는 로직 
         # rqt에서 확인하기 위해 박스와 라벨 이름을 표시하는 이미지를 /yolo_debug/compressed 라는 이름으로 발행
         # state에서 사용하기 위해 blue_left = 1.0 blue_right = 2.0 이렇게 저장한 값을 state에 전송
+        
         self.camera_count += 1
 
-        if self.camera_count % 10 != 0:
+        if self.camera_count % 5 != 0:
             return
         # print("DEBUG: camera_sub_callback 호출됨!")
         # 로그 뜨는지 확인하기 위한 코드 였던 것
@@ -411,14 +413,14 @@ class RLEnvironment(Node):
                     self.get_logger().info("회전 쿨타임 종료")
 
 
-                if not self.is_rotating and not cooldown_active and 40000 < area < 100000 and direction_id == 1.0:
+                if not self.is_rotating and not cooldown_active and 30000 < area < 100000 and direction_id == 1.0:
                     self.is_rotating = True
                     self.rotation_target_label = "blue_left"
                     self.rotation_score = 0 # 시작 시 점수 초기화
                     self.last_box_center_x = center_x # 기준점 초기화
                     self.get_logger().info(f"회전 시작 감지: {self.rotation_target_label}, 면적: {area:.0f}")
 
-                elif not self.is_rotating and not cooldown_active and 40000 < area < 100000 and direction_id == 2.0:
+                elif not self.is_rotating and not cooldown_active and 30000 < area < 100000 and direction_id == 2.0:
                     self.is_rotating = True
                     self.rotation_target_label = "blue_right"
                     self.rotation_score = 0 # 시작 시 점수 초기화
