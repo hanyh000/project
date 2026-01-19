@@ -306,7 +306,7 @@ class RLEnvironment(Node):
             self.get_logger().info('task failed service call failed')
 
     def camera_sub_callback(self, msg):
-        # 프레임 수 10번당 1번으로 제한하고 컴프레스드 이미지를 cv브릿지로 cv2로 전환
+        # 프레임 수 5번당 1번으로 제한하고 컴프레스드 이미지를 cv브릿지로 cv2로 전환
         # 욜로 모델을 가져와 특정 객체를 감지하면 박스와 라벨이름으로 객체를 표시 
         # 감지한 박스 크기와 쿨타임을 계산하고 회전중 동작 여부 , 박스 크기와 쿨타임 작동여부를 파악하여
         # 맞으면 회전 동작을 시작하고 특정 객체를 인식한 박스가 왼쪽 방향으로 가는 것이면 
@@ -345,7 +345,7 @@ class RLEnvironment(Node):
 
         for r in results:
             for box in r.boxes:
-                # 1. 정보 추출
+                # 정보 추출
                 label = self.yolo_model.names[int(box.cls)]
                 conf = float(box.conf)
 
@@ -354,10 +354,10 @@ class RLEnvironment(Node):
 
                 x1, y1, x2, y2 = map(int, box.xyxy[0])
                 
-                # 2. 박스 그리기 (녹색 선)
+                # 박스 그리기 (녹색 선)
                 cv2.rectangle(debug_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
-                # 1. 박스 면적(또는 높이) 계산
+                # 박스 면적(또는 높이) 계산
                 box_width = x2 - x1
                 box_height = y2 - y1
                 area = box_width * box_height
@@ -366,7 +366,7 @@ class RLEnvironment(Node):
                 #self.get_logger().info(f"[DETECT] Label: {label}, Area: {area:.0f}")
                 # 박스 크기를 출력하는 확인용 로그 코드 였던 것
 
-                # 3. 라벨 텍스트 쓰기
+                # 라벨 텍스트 쓰기
                 display_text = f"{label} {conf:.2f}"
                 cv2.putText(debug_image, display_text, (x1, y1 - 10), 
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
@@ -378,7 +378,6 @@ class RLEnvironment(Node):
                 if roi.size == 0: continue
 
                 hsv_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
-                # ... [기존 mask_red, mask_blue, mask_black 처리 로직 생략] ...
 
                 lower_red = numpy.array([0, 100, 100]); upper_red = numpy.array([10, 255, 255])
                 lower_blue = numpy.array([90, 50, 50]); upper_blue = numpy.array([130, 255, 255])
@@ -388,7 +387,7 @@ class RLEnvironment(Node):
                     2.0: cv2.countNonZero(cv2.inRange(hsv_roi, lower_red, upper_red))      # Red
                 }
 
-                # 5. 가장 많이 검출된 색상 찾기 (max_color 정의)
+                # 가장 많이 검출된 색상 찾기 (max_color 정의)
                 max_color = max(counts, key=counts.get)
                 
                 # 색상 판별 후 debug_image에 추가 정보 기입
@@ -423,18 +422,18 @@ class RLEnvironment(Node):
                 elif not self.is_rotating and not cooldown_active and 30000 < area < 100000 and direction_id == 2.0:
                     self.is_rotating = True
                     self.rotation_target_label = "blue_right"
-                    self.rotation_score = 0 # 시작 시 점수 초기화
-                    self.last_box_center_x = center_x # 기준점 초기화
+                    self.rotation_score = 0
+                    self.last_box_center_x = center_x 
                     self.get_logger().info(f"회전 시작 감지: {self.rotation_target_label}, 면적: {area:.0f}")
 
-                # 2. 회전 중 점수 계산 로직
+                # 회전 중 점수 계산 로직
                 if self.is_rotating and label == self.rotation_target_label:
                     self.box_found_in_current_frame = True
                     if self.rotation_target_label == "blue_left":
-                        # 로봇 좌회전 -> 박스는 오른쪽(+)으로 이동해야 함
+                        # 로봇 좌회전 -> 박스는 오른쪽(+)으로 이동 반대로 가면 점수 -화
                         delta = center_x - self.last_box_center_x
                     else:
-                        # 로봇 우회전 -> 박스는 왼쪽(-)으로 이동해야 함
+                        # 로봇 우회전 -> 박스는 왼쪽(-)으로 이동 반대로 가면 점수 -화
                         delta = self.last_box_center_x - center_x
 
                     # 점수 증감 판정
@@ -461,7 +460,7 @@ class RLEnvironment(Node):
         # 전방 범위를 state에 전송
 
         #self.get_logger().info("Scan 수신 중...", throttle_duration_sec=1.0)
-        # 콜콘 로그 이슈로 바뀐 정보가 저장이 안되는 것을 모르고 사용했던 확인용 로그 코드 였던것 ...
+        # 콜콘 로그 이슈로 바뀐 정보가 저장이 안되는 것을 모르고 사용했던 확인용 로그 코드 였던 것
 
         self.scan_ranges = []
         self.front_ranges = []
@@ -490,7 +489,7 @@ class RLEnvironment(Node):
         # 지금은 사용하지 않는 전방 최소 장애물 거리 저장 코드 였던 것
 
     def odom_sub_callback(self, msg):
-        # 로봇의 x,y 좌표를 메시지로 받아 오고  theta 값을 euler_from_quaternion 이 함수에서 계산해서 정보를 받아옴
+        # 로봇의 x, y 좌표를 메시지로 받아 오고 theta 값을 euler_from_quaternion 이 함수에서 계산해서 정보를 받아옴
         # 골과의 거리를 절대 값으로 계산하여 저장하고 각도를 계산해서 골지점을 바라보는 각도를 저장함
         # 골과의 거리는 골인 성공여부를 따질때 사용하고 바라보는 각도는 reward 쪽에서 사용함
 
@@ -516,7 +515,7 @@ class RLEnvironment(Node):
         self.goal_angle = goal_angle
 
     def calculate_state(self):
-        # 체크포인트의 남은 수에 따라 타겟 x,y가 정해지고 이 x,y 값을 이용해서 타겟 각도나 거리를 정함
+        # 체크포인트의 남은 수에 따라 타겟 x, y가 정해지고 이 x, y 값을 이용해서 타겟 각도나 거리를 정함
         # 스테이트 구조는 타겟 거리와 각도, 스캔데이터의 범위를 쪼갠 (24개의 범위 값)
         # 화살표를 감지하여 회전하고 있는지 확인 하는 값 회전 했을때 받는 회전 점수와 
         # 객체를 인식했을때 나오는 라벨 값을 저장한 값으로 이루어지고 
@@ -525,7 +524,7 @@ class RLEnvironment(Node):
         # 성공 실패 기준으로 성공했는지 아니면 실패 했는지를 파악하고 성공, 실패와 관련된 함수에 호출 신호 보냄
 
         if self.normal_cp_idx < len(self.normal_checkpoints):
-            # 1순위: 아직 통과 못한 상시 CP
+            # 1순위: 아직 통과 못한 체크포인트
             target_x, target_y = self.normal_checkpoints[self.normal_cp_idx]
         else:
             # 2순위: 최종 목적지
@@ -550,6 +549,8 @@ class RLEnvironment(Node):
         state.append(float(self.rotation_score))
 
         # state.append(self.detected_object_info[0]) # color
+        # 색상 마스킹을 사용하던 때 들어가던 state 구조 코드 였던 것
+
         state.append(self.detected_object_info[0]) # direction
         
         self.local_step += 1
