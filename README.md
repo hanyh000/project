@@ -11,4 +11,3 @@ turtlebot3_machine_learning/turtlebot3_dqn/turtlebot3_dqn 폴더에 넣어서 �
 실행 순서는 맵 런치 파일 및 터틀봇 세팅 -> dqn_gazebo -> dqn_environment.py -> dqn_agent 순으로 실행 
 명령어 예시(ros2 launch turtlebot3_gazebo middle.launch.py -> ros2 run turtlebot3_dqn dqn_gazebo 1
 -> ros2 run turtlebot3_dqn dqn_environment -> ros2 run turtlebot3_dqn dqn_agent 1 10000)
-agent, gazebo 수정 파일은 발표 후 현재 깃에 추가할 예정
