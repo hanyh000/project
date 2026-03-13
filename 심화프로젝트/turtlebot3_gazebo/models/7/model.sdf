@@ -1,0 +1,44 @@
+<?xml version='1.0'?>
+<sdf version='1.7'>
+  <model name='7'>
+    <static>true</static>
+    
+    <pose>1.215160 2.375410 0.142804 0 0 -3.141593</pose>
+
+    <link name='link_5'>
+      <pose>0 0 0 0 0 0</pose>
+
+      <visual name='visual'>
+        <geometry>
+          <box>
+            <size>0.815204 0.020098 0.262382</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+
+      <visual name='signboard_visual'>
+        <pose>0 0.011 0 0 0 0</pose> 
+        <geometry>
+          <box>
+            <size>0.815204 0.001 0.262382</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://7/materials/scripts</uri>
+            <uri>model://7/materials/textures</uri>
+            <name>Model_7/Texture</name>
+          </script>
+        </material>
+      </visual>
+
+    </link>
+    <allow_auto_disable>1</allow_auto_disable>
+  </model>
+</sdf>

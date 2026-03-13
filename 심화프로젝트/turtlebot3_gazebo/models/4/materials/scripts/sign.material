@@ -1,0 +1,13 @@
+material Model_4/Texture
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture 4.png
+      }
+    }
+  }
+}

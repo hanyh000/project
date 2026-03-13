@@ -1,0 +1,13 @@
+material Model_7/Texture
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture 7.png
+      }
+    }
+  }
+}

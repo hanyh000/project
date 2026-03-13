@@ -1,0 +1,13 @@
+material Model_6/Texture
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture 6.png
+      }
+    }
+  }
+}
