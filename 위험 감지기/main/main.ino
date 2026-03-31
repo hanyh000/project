@@ -10,15 +10,6 @@ int echoPin1 = 3;
 int buzzer   = 10;
 int rLED = 11, yLED = 12, gLED = 13;
 
-// --- 모터 핀 (L298N 예시) ---
-int enA = 9; // 모터 A 속도 (PWM)
-int in1 = 8; // 모터 A 방향 1
-int in2 = 7; // 모터 A 방향 2
-int enB = 6; // 모터 B 속도 (PWM)
-int in3 = 5; // 모터 B 방향 1
-int in4 = 4; // 모터 B 방향 2
-// ------------------------------
-
 // === 전역 변수 ===
 long duration1;
 long distance1;
